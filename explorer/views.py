@@ -2,6 +2,7 @@ import os
 from django.shortcuts import render
 from django.http import HttpResponse
 
+# Restricted base directory
 BASE_DIR = r"E:\\"
 
 
@@ -9,10 +10,25 @@ def explore(request, folder_path=""):
 
     try:
 
-        current_path = os.path.join(BASE_DIR, folder_path)
+        # Create full path
+        current_path = os.path.abspath(
+            os.path.join(BASE_DIR, folder_path)
+        )
+
+        # SECURITY CHECK
+        # Prevent access outside BASE_DIR
+        if not current_path.startswith(os.path.abspath(BASE_DIR)):
+
+            return HttpResponse("Access Denied!")
+
+        # PATH CHECK
+        if not os.path.exists(current_path):
+
+            return HttpResponse("Path Not Found!")
 
         items = []
 
+        # Read directory contents
         for item_name in os.listdir(current_path):
 
             item_path = os.path.join(current_path, item_name)
@@ -50,6 +66,10 @@ def explore(request, folder_path=""):
         }
 
         return render(request, "home.html", context)
+
+    except PermissionError:
+
+        return HttpResponse("Permission Denied!")
 
     except Exception as e:
 
