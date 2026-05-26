@@ -1,84 +1,96 @@
-<!-- templates/home.html -->
-
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>File Explorer</title>
 
     <style>
-        body{
-            font-family: Arial, sans-serif;
-            background-color: #111;
-            color: white;
-            padding: 20px;
-        }
 
-        h1{
-            text-align: center;
+        body{
+            background: #111;
+            color: white;
+            font-family: Arial;
+            padding: 20px;
         }
 
         table{
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
 
         th, td{
             border: 1px solid #444;
-            padding: 12px;
-            text-align: left;
+            padding: 10px;
         }
 
         th{
-            background-color: #222;
-        }
-
-        tr:nth-child(even){
-            background-color: #1a1a1a;
+            background: #222;
         }
 
         tr:hover{
-            background-color: #333;
+            background: #333;
         }
+
+        a{
+            color: cyan;
+            text-decoration: none;
+        }
+
     </style>
+
 </head>
 
 <body>
 
-    <h1>📁 Django File Explorer</h1>
+<h1>📁 Django File Explorer</h1>
 
-    <table>
+<h3>{{ current_path }}</h3>
 
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Size</th>
-            <th>Last Modified</th>
-        </tr>
+<table>
 
-        {% for item in items %}
+<tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Size</th>
+</tr>
 
-        <tr>
+{% for item in items %}
 
-            <td>{{ item.name }}</td>
+<tr>
 
-            <td>
-                {% if item.is_folder %}
-                    Folder
-                {% else %}
-                    File
-                {% endif %}
-            </td>
+<td>
 
-            <td>{{ item.size }} Bytes</td>
+{% if item.is_folder %}
 
-            <td>{{ item.modified_time }}</td>
+<a href="/explore/{{ item.path }}/">
+    📁 {{ item.name }}
+</a>
 
-        </tr>
+{% else %}
 
-        {% endfor %}
+📄 {{ item.name }}
 
-    </table>
+{% endif %}
+
+</td>
+
+<td>
+
+{% if item.is_folder %}
+Folder
+{% else %}
+File
+{% endif %}
+
+</td>
+
+<td>{{ item.size }} Bytes</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
 
 </body>
 </html>

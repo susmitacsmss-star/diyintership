@@ -1,74 +1,45 @@
-# views.py
-
 import os
 from django.shortcuts import render
 from django.http import HttpResponse
 
-def file_explorer(request):
-    # Base directory you want to explore
-    BASE_DIR = r"C:\Users\YourName\Documents"
+# Base directory
+BASE_DIR = r"E:\\"
+
+
+def explore(request, folder_path=""):
 
     try:
+
+        # Current folder path
+        current_path = os.path.join(BASE_DIR, folder_path)
+
         items = []
 
-        # Loop through all files and folders
-        for item_name in os.listdir(BASE_DIR):
+        # Read files/folders
+        for item_name in os.listdir(current_path):
 
             # Full path
-            item_path = os.path.join(BASE_DIR, item_name)
+            item_path = os.path.join(current_path, item_name)
 
-            # Check if folder
-            is_folder = os.path.isdir(item_path)
-
-            # Get size (in bytes)
-            size = os.path.getsize(item_path)
-
-            # Get last modified time
-            modified_time = os.path.getmtime(item_path)
+            # Relative path for URL
+            relative_path = os.path.relpath(item_path, BASE_DIR)
 
             # Store details
             items.append({
                 "name": item_name,
-                "path": item_path,
-                "is_folder": is_folder,
-                "size": size,
-                "modified_time": modified_time,
+                "path": relative_path.replace("\\", "/"),
+                "is_folder": os.path.isdir(item_path),
+                "size": os.path.getsize(item_path),
+                "modified_time": os.path.getmtime(item_path),
             })
 
         context = {
             "items": items,
-            "current_path": BASE_DIR
+            "current_path": current_path,
         }
 
-        return render(request, "explorer.html", context)
+        return render(request, "home.html", context)
 
     except Exception as e:
+
         return HttpResponse(f"Error: {e}")
-    
-from django.http import HttpResponse
-
-def home(request):
-    return HttpResponse("HELLO BRO YOUR DJANGO IS WORKING 🚀")
-
-
-import os
-from django.shortcuts import render
-
-def home(request):
-
-    BASE_DIR = r"E:\\"
-
-    items = []
-
-    for item in os.listdir(BASE_DIR):
-
-        full_path = os.path.join(BASE_DIR, item)
-
-        items.append({
-            'name': item,
-            'is_folder': os.path.isdir(full_path),
-            'size': os.path.getsize(full_path),
-            'modified': os.path.getmtime(full_path),
-        })
-
-    return render(request, 'home.html', {'items': items})
