@@ -2,7 +2,7 @@
 <html>
 <head>
 
-    <title>File Explorer</title>
+    <title>Advanced File Explorer</title>
 
     <style>
 
@@ -13,6 +13,11 @@
             padding: 20px;
         }
 
+        h1{
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         table{
             width: 100%;
             border-collapse: collapse;
@@ -20,11 +25,16 @@
 
         th, td{
             border: 1px solid #444;
-            padding: 10px;
+            padding: 12px;
+            text-align: left;
         }
 
         th{
             background: #222;
+        }
+
+        tr:nth-child(even){
+            background: #1a1a1a;
         }
 
         tr:hover{
@@ -36,6 +46,15 @@
             text-decoration: none;
         }
 
+        .folder{
+            color: #ffcc00;
+            font-weight: bold;
+        }
+
+        .file{
+            color: #00ffcc;
+        }
+
     </style>
 
 </head>
@@ -44,14 +63,16 @@
 
 <h1>📁 Django File Explorer</h1>
 
-<h3>{{ current_path }}</h3>
+<h3>Current Path: {{ current_path }}</h3>
 
 <table>
 
 <tr>
+    <th>Icon</th>
     <th>Name</th>
     <th>Type</th>
     <th>Size</th>
+    <th>Last Modified</th>
 </tr>
 
 {% for item in items %}
@@ -61,14 +82,26 @@
 <td>
 
 {% if item.is_folder %}
+📁
+{% else %}
+📄
+{% endif %}
 
-<a href="/explore/{{ item.path }}/">
-    📁 {{ item.name }}
+</td>
+
+<td>
+
+{% if item.is_folder %}
+
+<a class="folder" href="/explore/{{ item.path }}/">
+    {{ item.name }}
 </a>
 
 {% else %}
 
-📄 {{ item.name }}
+<span class="file">
+    {{ item.name }}
+</span>
 
 {% endif %}
 
@@ -84,7 +117,17 @@ File
 
 </td>
 
-<td>{{ item.size }} Bytes</td>
+<td>
+
+{% if item.is_folder %}
+--
+{% else %}
+{{ item.size }} Bytes
+{% endif %}
+
+</td>
+
+<td>{{ item.modified_time }}</td>
 
 </tr>
 
