@@ -49,3 +49,26 @@ from django.http import HttpResponse
 
 def home(request):
     return HttpResponse("HELLO BRO YOUR DJANGO IS WORKING 🚀")
+
+
+import os
+from django.shortcuts import render
+
+def home(request):
+
+    BASE_DIR = r"E:\\"
+
+    items = []
+
+    for item in os.listdir(BASE_DIR):
+
+        full_path = os.path.join(BASE_DIR, item)
+
+        items.append({
+            'name': item,
+            'is_folder': os.path.isdir(full_path),
+            'size': os.path.getsize(full_path),
+            'modified': os.path.getmtime(full_path),
+        })
+
+    return render(request, 'home.html', {'items': items})
